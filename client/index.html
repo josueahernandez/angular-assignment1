@@ -21,53 +21,57 @@
 
     <div ng-controller="MainCtrl as main" class="container">
 
-      <form ng-submit="main.searchByZip(main.inputs.zip)" class="form-inline">
-        <div class="form-group">
-          <label>Zip Code:  </label>
-          <input class="form-control" type="string" ng-model="main.inputs.zip"/>
-        </div>
+      <div class="radio">
+        <p>Search For:</p>
+        <label>
+          <input
+          type="radio"
+          ng-model="main.congressType"
+          value="reps">
+          Representatives
+        </label>
+      </div>
 
-        <button class="btn btn-primary" type"submit">Submit</button>
+      <div class="radio">
+
+        <label>
+          <input type="radio" ng-model="main.congressType"  ng-disabled="main.loading" value="sens">
+          Senators
+        </label>
+      </div>
+
+      <p>Search By:</p>
+      <form class="form-inline">
+      <select
+        class="form-control"
+        ng-model="main.criteria"
+        ng-options="item as item.label for item in main.apis"
+        ng-change="main.input = ''">
+      </select>
+      <input
+        class="form-control"
+        type="text"
+        ng-model="main.input" 
+        autofocus />
+      <button
+        class="btn btn-info"
+        ng-click="main.criteria.method(main.input)"
+        ng-disabled="main.loading || !main.input"
+        type="submit">
+        Submit
+      </button>
       </form>
 
-      <form ng-submit="main.searchRepByName(main.inputs.repName)" class="form-inline">
-        <div class="form-group">
-          <label>By Name:  </label>
-          <input class="form-control" type="string" ng-model="main.inputs.repName"/>
-        </div>
 
-        <button class="btn btn-primary" type"submit">Submit</button>
-      </form>
-
-      <form ng-submit="main.searchRepByState(main.inputs.repState)" class="form-inline">
-        <div class="form-group">
-          <label>By State:  </label>
-          <input class="form-control" type="string" ng-model="main.inputs.repState"/>
-        </div>
-
-        <button class="btn btn-primary" type"submit">Submit</button>
-      </form>
-
-      <form ng-submit="main.searchSenByName(main.inputs.senName)" class="form-inline">
-        <div class="form-group">
-          <label>By Name:  </label>
-          <input class="form-control" type="string" ng-model="main.inputs.senName"/>
-        </div>
-
-        <button class="btn btn-primary" type"submit">Submit</button>
-      </form>
-
-      <form ng-submit="main.searchSenByState(main.inputs.senState)" class="form-inline">
-        <div class="form-group">
-          <label>By State:  </label>
-          <input class="form-control" type="string" ng-model="main.inputs.senState"/>
-        </div>
-
-        <button class="btn btn-primary" type"submit">Submit</button>
-      </form>
 
       <ul class="list-group">
-        <li class="list-group-item" ng-repeat="rep in main.reps">
+        <li class="list-group-item" ng-show="main.loading">
+          Loading...
+        </li>
+        <li class="list-group-item" ng-show="main.reps.length === 0 && !main.loading">
+          No Results
+        </li>
+        <li ng-hide="main.loading" class="list-group-item" ng-repeat="rep in main.reps">
           <h4 class="list-group-item-heading">{{rep.name}}</h4>
           <p>State: {{rep.state}} </p>
         </li>
